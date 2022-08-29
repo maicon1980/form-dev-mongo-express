@@ -1,0 +1,38 @@
+version: '3.8'
+
+volumes:
+  vol-mongo:
+
+networks:
+  net-prod:
+    driver: bridge
+
+services:  
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    networks:
+      - net-prod
+    volumes:
+      - vol-mongo:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongouser
+      MONGO_INITDB_ROOT_PASSWORD: q1w2e3r4
+
+  mongo-express:
+      image: mongo-express:latest
+      container_name: mongo-express
+      restart: unless-stopped
+      ports:
+        - 8081:8081
+      networks:
+        - net-prod
+      depends_on:
+        - mongodb
+      environment:
+        ME_CONFIG_MONGODB_SERVER: mongodb
+        ME_CONFIG_MONGODB_ADMINUSERNAME: mongouser
+        ME_CONFIG_MONGODB_ADMINPASSWORD: q1w2e3r4
